@@ -16,8 +16,11 @@ const Function = ({ inputValue, isFirst, number, handleEquationChange, nextFunct
       )
     }
 
-    <div className="bg-white rounded-lg shadow-sm p-4 w-64">
-      <div className="text-sm text-gray-500 mb-4">::: Function: {number}</div>
+    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 w-64">
+      <div className="text-[13px] text-gray-400 mb-6 flex items-center gap-1 font-semibold">
+        <span className="opacity-50">:::</span>
+        <span>Function: {number}</span>
+      </div>
 
       <div className="mb-4">
         <label className="text-sm font-medium block mb-2">Equation</label>
@@ -44,10 +47,10 @@ const Function = ({ inputValue, isFirst, number, handleEquationChange, nextFunct
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-blue-400"></div>
-          <span className="text-sm">input</span>
+          <span id={`input-${number}`} className="text-sm">input</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm">output</span>
+          <span id={`output-${number}`} className="text-sm">output</span>
           <div className="w-3 h-3 rounded-full bg-blue-400"></div>
         </div>
       </div>

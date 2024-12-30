@@ -1,53 +1,54 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Function from './component/Function'
 
-const functions = [
-  {
-    number: 1,
-    equation: 'x^2',
-    nextFunction: 2,
-    isFirst: true,
-  },
-  {
-    number: 2,
-    equation: '2x+4',
-    nextFunction: 4,
-  },
-  {
-    number: 3,
-    equation: 'x^2+20',
-    nextFunction: 4,
-    isLast: true,
-  },
-  {
-    number: 4,
-    equation: 'x-2',
-    nextFunction: 5,
-  },
-  {
-    number: 5,
-    equation: 'x/2',
-    nextFunction: 3,
-  }
-]
+import { FUNCTIONS } from './constants';
+
+import { evaluate } from 'mathjs'
 
 function App() {
-  const [items, setItems] = useState(functions);
+  const [items, setItems] = useState(FUNCTIONS);
   const [inputValue, setInputValue] = useState(0);
   const [outputValue, setOutputValue] = useState(0);
 
+  useEffect(() => {
+    if (inputValue && items.length) {
+      const newResult = calculateValue();
+      setOutputValue(newResult);
+    }
+  }, [inputValue, items]);
+
   const sanitizeValue = (value) => {
-    console.log('sanitizeValue');
+    const validPattern = /^[0-9x+\-*/^().]+$/;
+    if (!validPattern.test(value)) {
+      return false;
+    }
+
     return true;
   };
 
   const calculateValue = () => {
-    console.log('calculate value');
+    try {
+      let currentFunction = items.find(f => f.isFirst);
+      if (!currentFunction) return 0;
+
+      let result = inputValue;
+
+      while (currentFunction) {
+          result = evaluate(currentFunction.equation, { x: result });
+
+          if (currentFunction.isLast) break;
+          currentFunction = items.find(f => f.number === currentFunction.nextFunction);
+          if (!currentFunction) break;
+      }
+
+      return result;
+    } catch (err) {
+      console.error('Please provide a valid Equation');
+    }
   };
 
   const onInputChange = (value) => {
     setInputValue(value);
-    calculateValue();
   };
 
   const handleEquationChange = (number, value) => {
@@ -61,12 +62,11 @@ function App() {
             equation: value,
         }) : val))
       ))
-      calculateValue();
     }
   };
 
   return (
-    <div className="m-2.5 flex flex-wrap gap-24 justify-center">
+    <div className="m-2.5 relative flex flex-wrap gap-24 justify-center">
       {
         items.map((item) => (
           <Function
